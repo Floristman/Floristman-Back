@@ -1,5 +1,6 @@
 from django.db import models
 
+<<<<<<< HEAD
 
 class Category(models.Model):
     name = models.CharField(max_length=120)
@@ -36,3 +37,9 @@ class Products(models.Model):
             "narx": self.narx,
         }
 
+=======
+# Create your models here.
+
+
+# code
+>>>>>>> 259d3e27507aedc09e5de6473e26c996783ba0a8
