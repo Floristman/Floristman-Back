@@ -45,3 +45,4 @@ class User(AbstractUser):
             "password": self.password,
 
         }
+
