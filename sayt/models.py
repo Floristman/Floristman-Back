@@ -46,3 +46,18 @@ class User(AbstractUser):
 
         }
 
+
+class OTP(models.Model):
+    key = models.CharField(max_length=990)
+    gmail = models.CharField(max_length=128)
+    is_expired = models.BooleanField(default=False)
+    tries = models.SmallIntegerField(default=0)
+    state = models.CharField(max_length=25)
+    is_comfirmed = models.BooleanField(default=False)
+    create_at = models.DateTimeField(auto_now_add=True, auto_now=False, editable=False)
+    update_at = models.DateTimeField(auto_now_add=False, auto_now=True,)
+
+    def save(self, *args, **kwargs):
+        if self.is_expired >= 3:
+            self.is_expired = True
+        return super(OTP, self).save(*args, **kwargs)
