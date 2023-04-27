@@ -3,9 +3,13 @@ import random
 import uuid
 
 from rest_framework import serializers
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
-from rest_framework.generics import GenericAPIView, ListCreateAPIView, UpdateAPIView, DestroyAPIView
+from rest_framework.generics import GenericAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+
+from account.models import Products, Likes
 from sayt.models import User, OTP
 
 
@@ -51,13 +55,10 @@ class RegisView(GenericAPIView):
             return Response({
                 "Error": "Bunday foydalanuvch bor"
             })
-
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save
-        user.set_password(password)
-        user.save()
-
+        user = User.objects.create_user(
+            gmail=gmail,
+            password=password
+        )
         token = Token.objects.create(user=user)
 
         return Response({
@@ -90,6 +91,7 @@ class StepOne(GenericAPIView):
         })
 
 
+
 class StepTwo(GenericAPIView):
     def post(self, requests, *args, **kwargs):
         data = requests.data
@@ -111,7 +113,6 @@ class StepTwo(GenericAPIView):
             })
 
         if token.is_expired:
-
             return Response({
                 "Error": "Eski token"
             })
@@ -135,3 +136,40 @@ class StepTwo(GenericAPIView):
         return Response({
             "result": "succes"
         })
+
+
+class LikeDislike(GenericAPIView):
+    authentication_classes = TokenAuthentication,
+    permission_classes = IsAuthenticated,
+
+    def post(self, requests, *args, **kwargs):
+        data = requests.data
+        user = requests.data
+
+        if ('like' not in data and 'dislike' not in data) or "product_id" not in data:
+            return Response({"Error": 'malumot toliq emas'})
+
+        pro = Products.objects.filter(pk=data['product-id']).first()
+        if not pro:
+            return Response({'Error': "bunday produk yoq"})
+
+        likes = Likes.objects.get_or_create(product=pro, user=requests.user)[0]
+
+        if 'like' in data and 'dislike' in data:
+            return Response({"Error": 'Malumot xato'})
+
+        like = likes.like
+        dislike = likes.dislike
+
+        if 'like' in data and data['like']:
+            like = True
+            dislike = False
+
+        if 'dislike' in data and data['dislike']:
+            like = False
+            dislike = True
+
+        likes.like = like
+        likes.dislike = dislike
+        likes.save()
+        return Response({'succes'})

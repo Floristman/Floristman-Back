@@ -12,7 +12,8 @@ class CastomUserManager(BaseUserManager):
                           is_superuser=is_superuser,
                           **kwargs)
         user.set_password(password)
-        return user.save()
+        user.save()
+        return user
 
     def create_seperuser(self, gmail, password, is_staff=True, is_acive=True, is_superuser=True, *args, **kwargs):
         return self.create_user(gmail=gmail,
@@ -24,13 +25,15 @@ class CastomUserManager(BaseUserManager):
 
 class User(AbstractUser):
     name = models.CharField(max_length=128, null=True, blank=True)
-    phone = models.CharField(max_length=20)
+    phone = models.CharField(max_length=20, null=True, blank=True)
     gmail = models.CharField(max_length=128, unique=True, null=True, blank=True)
     password = models.CharField(_('password'), max_length=256)
 
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
+    username = False
+    objects = CastomUserManager()
 
     USERNAME_FIELD = 'gmail'
 
@@ -55,7 +58,7 @@ class OTP(models.Model):
     state = models.CharField(max_length=25)
     is_comfirmed = models.BooleanField(default=False)
     create_at = models.DateTimeField(auto_now_add=True, auto_now=False, editable=False)
-    update_at = models.DateTimeField(auto_now_add=False, auto_now=True,)
+    update_at = models.DateTimeField(auto_now_add=False, auto_now=True, )
 
     def save(self, *args, **kwargs):
         if self.is_expired >= 3:
