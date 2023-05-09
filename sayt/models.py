@@ -15,10 +15,11 @@ class CastomUserManager(BaseUserManager):
         user.save()
         return user
 
-    def create_seperuser(self, gmail, password, is_staff=True, is_acive=True, is_superuser=True, *args, **kwargs):
+    def create_superuser(self, gmail, password, is_staff=True, is_active=True, is_superuser=True, *args, **kwargs):
         return self.create_user(gmail=gmail,
+                                password=password,
                                 is_staff=is_staff,
-                                is_acive=is_acive,
+                                is_active=is_active,
                                 is_superuser=is_superuser,
                                 **kwargs)
 

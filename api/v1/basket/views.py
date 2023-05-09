@@ -19,7 +19,7 @@ class BasketView(GenericAPIView):
                 "Error": "Product id berilmagan"
             })
 
-        product = Products.objects.filter(pk=data["produvt_id"]).First
+        product = Products.objects.filter(pk=data["product_id"]).first()
 
         if product:
             basket = Basket.objects.get_or_create(
@@ -30,15 +30,8 @@ class BasketView(GenericAPIView):
             basket.quantity = data.get("quantity", 1)
             basket.save()
 
-            return Response({"result":basketFormat(basket)})
+            return Response({"result": basketFormat(basket)})
 
 
         else:
-            return Response({"Error":"Notogri product berilgan"})
-
-
-
-
-
-
-
+            return Response({"Error": "Notogri product berilgan"})

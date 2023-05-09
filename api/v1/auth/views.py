@@ -2,7 +2,6 @@ import datetime
 import random
 import uuid
 
-from rest_framework import serializers
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import GenericAPIView
@@ -29,7 +28,7 @@ class LoginViev(GenericAPIView):
         user = User.objects.filter(gmail=gmail).first()
         if not user:
             return Response({
-                "Error": "Bumday foydalanuvch yoq"
+                "Error": "Bunday foydalanuvch yoq"
             })
 
         if not user.check_password(password):
@@ -91,7 +90,6 @@ class StepOne(GenericAPIView):
         })
 
 
-
 class StepTwo(GenericAPIView):
     def post(self, requests, *args, **kwargs):
         data = requests.data
@@ -126,8 +124,7 @@ class StepTwo(GenericAPIView):
             return Response({
                 "Error": "Token eskirgan"
             })
-
-        if token.key[-6] != str(data['parol']):
+        if token.key[-6:] != str(data['parol']):
             token.tries += 1
             return Response({
                 "Error": "Kod xato"
