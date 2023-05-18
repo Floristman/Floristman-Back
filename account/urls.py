@@ -8,8 +8,3 @@ urlpatterns = [
     path("logout/", sign_out, name="sign-out"),
 ]
 
-
-
-
-
-
